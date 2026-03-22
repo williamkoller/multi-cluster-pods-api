@@ -244,7 +244,16 @@ export function ApplicationCards({
   onDeletePod,
   onViewLogs,
 }: ApplicationCardProps) {
-  const [expanded, setExpanded] = useState<string | null>(null);
+  const [expanded, setExpanded] = useState<Set<string>>(new Set());
+
+  const toggleExpanded = (key: string) => {
+    setExpanded((prev) => {
+      const next = new Set(prev);
+      if (next.has(key)) next.delete(key);
+      else next.add(key);
+      return next;
+    });
+  };
   const [syncingKey, setSyncingKey] = useState<string | null>(null);
   const [scaleTarget, setScaleTarget] = useState<ApplicationInfo | null>(null);
   const [replicas, setReplicas] = useState(0);
@@ -406,13 +415,13 @@ export function ApplicationCards({
       <div className='grid gap-3 sm:grid-cols-2 lg:grid-cols-3'>
         {apps.map((app) => {
           const key = `${app.cluster}-${app.namespace}-${app.name}`;
-          const isExpanded = expanded === key;
+          const isExpanded = expanded.has(key);
           const hCfg = healthConfig[app.health] ?? healthConfig.Unknown;
 
           return (
             <div
               key={key}
-              className={`rounded-lg border bg-[var(--color-surface)] overflow-hidden transition-all cursor-pointer ${
+              className={`rounded-lg border bg-[var(--color-surface)] overflow-hidden transition-all ${
                 app.health === 'Healthy'
                   ? 'border-[var(--color-border)]'
                   : app.health === 'Degraded'
@@ -421,7 +430,6 @@ export function ApplicationCards({
                       ? 'border-[var(--color-health-yellow)]/40'
                       : 'border-[var(--color-border)]'
               }`}
-              onClick={() => setExpanded(isExpanded ? null : key)}
             >
               {/* Top status bar */}
               <div className={`h-1 ${hCfg.bg}`} />
@@ -597,7 +605,7 @@ export function ApplicationCards({
                   <button
                     onClick={(e) => {
                       e.stopPropagation();
-                      setExpanded(isExpanded ? null : key);
+                      toggleExpanded(key);
                     }}
                     className='inline-flex items-center gap-1 rounded-md border border-[var(--color-border)] px-2.5 py-1 text-[10px] font-medium text-[var(--color-text-secondary)] hover:bg-[var(--color-surface-sunken)] transition-colors'
                     title='Details — Show resource tree'
