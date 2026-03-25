@@ -7,6 +7,7 @@ interface PodsTableProps {
   loading: boolean;
   onRestart: (cluster: string, namespace: string, pod: string) => Promise<void>;
   onViewLogs: (cluster: string, namespace: string, pod: string) => void;
+  onNameClick?: (cluster: string, namespace: string, name: string) => void;
 }
 
 export function PodsTable({
@@ -14,6 +15,7 @@ export function PodsTable({
   loading,
   onRestart,
   onViewLogs,
+  onNameClick,
 }: PodsTableProps) {
   const [restartingPod, setRestartingPod] = useState<string | null>(null);
 
@@ -94,10 +96,23 @@ export function PodsTable({
                 {pod.namespace}
               </td>
               <td
-                className='truncate px-3 py-2 text-xs font-mono text-[var(--color-text-primary)]'
+                className='truncate px-3 py-2 text-xs font-mono'
                 title={pod.name}
               >
-                {pod.name}
+                {onNameClick ? (
+                  <button
+                    onClick={() =>
+                      onNameClick(pod.cluster, pod.namespace, pod.name)
+                    }
+                    className='text-[var(--color-accent)] hover:underline text-left cursor-pointer'
+                  >
+                    {pod.name}
+                  </button>
+                ) : (
+                  <span className='text-[var(--color-text-primary)]'>
+                    {pod.name}
+                  </span>
+                )}
               </td>
               <td className='px-3 py-2 text-xs tabular-nums text-[var(--color-text-secondary)]'>
                 {pod.ready}

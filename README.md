@@ -1,4 +1,4 @@
-# Multi-Cluster Pods API
+# Multi-Cluster
 
 Dashboard para gerenciamento e observabilidade de múltiplos clusters Kubernetes. Agrega workloads de todos os contextos do kubeconfig em uma interface única, oferecendo visualização em tempo real e ações operacionais como scale, restart e streaming de logs.
 

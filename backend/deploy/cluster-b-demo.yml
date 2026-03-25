@@ -1,3 +1,8 @@
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: kollerdevhub
+---
 apiVersion: apps/v1
 kind: Deployment
 metadata:
@@ -31,3 +36,24 @@ spec:
     - port: 80
       targetPort: 80
   type: ClusterIP
+---
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: httpbin-demo
+  namespace: kollerdevhub
+  annotations:
+    nginx.ingress.kubernetes.io/rewrite-target: /
+spec:
+  ingressClassName: nginx
+  rules:
+    - host: httpbin.cluster-b.local
+      http:
+        paths:
+          - path: /
+            pathType: Prefix
+            backend:
+              service:
+                name: httpbin-demo
+                port:
+                  number: 80

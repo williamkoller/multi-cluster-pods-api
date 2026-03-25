@@ -5,9 +5,14 @@ import { StatusBadge } from './StatusBadge';
 interface ServicesTableProps {
   services: ServiceInfo[];
   loading: boolean;
+  onNameClick?: (cluster: string, namespace: string, name: string) => void;
 }
 
-export function ServicesTable({ services, loading }: ServicesTableProps) {
+export function ServicesTable({
+  services,
+  loading,
+  onNameClick,
+}: ServicesTableProps) {
   const [expandedRow, setExpandedRow] = useState<string | null>(null);
 
   if (loading) {
@@ -97,10 +102,24 @@ export function ServicesTable({ services, loading }: ServicesTableProps) {
                     {svc.namespace}
                   </td>
                   <td
-                    className='truncate px-3 py-2 text-xs font-mono text-[var(--color-text-primary)]'
+                    className='truncate px-3 py-2 text-xs font-mono'
                     title={svc.name}
                   >
-                    {svc.name}
+                    {onNameClick ? (
+                      <button
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          onNameClick(svc.cluster, svc.namespace, svc.name);
+                        }}
+                        className='text-[var(--color-accent)] hover:underline text-left cursor-pointer'
+                      >
+                        {svc.name}
+                      </button>
+                    ) : (
+                      <span className='text-[var(--color-text-primary)]'>
+                        {svc.name}
+                      </span>
+                    )}
                   </td>
                   <td className='truncate px-3 py-2 text-xs text-[var(--color-text-secondary)]'>
                     {svc.type}

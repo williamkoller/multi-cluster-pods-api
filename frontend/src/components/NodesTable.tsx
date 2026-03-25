@@ -3,9 +3,10 @@ import type { NodeInfo } from '../types';
 interface NodesTableProps {
   nodes: NodeInfo[];
   loading: boolean;
+  onNameClick?: (cluster: string, name: string) => void;
 }
 
-export function NodesTable({ nodes, loading }: NodesTableProps) {
+export function NodesTable({ nodes, loading, onNameClick }: NodesTableProps) {
   if (loading) {
     return (
       <div className='flex justify-center py-12'>
@@ -71,10 +72,21 @@ export function NodesTable({ nodes, loading }: NodesTableProps) {
                 {node.cluster}
               </td>
               <td
-                className='truncate px-3 py-2 text-xs font-mono text-[var(--color-text-primary)]'
+                className='truncate px-3 py-2 text-xs font-mono'
                 title={node.name}
               >
-                {node.name}
+                {onNameClick ? (
+                  <button
+                    onClick={() => onNameClick(node.cluster, node.name)}
+                    className='text-[var(--color-accent)] hover:underline text-left cursor-pointer'
+                  >
+                    {node.name}
+                  </button>
+                ) : (
+                  <span className='text-[var(--color-text-primary)]'>
+                    {node.name}
+                  </span>
+                )}
               </td>
               <td className='px-3 py-2 text-xs'>
                 <span className='inline-flex items-center gap-1.5 text-xs text-[var(--color-text-secondary)]'>

@@ -543,3 +543,84 @@ func (h *Handler) ListApplicationsByCluster(c *gin.Context) {
 
 	c.JSON(http.StatusOK, model.Paginate(apps, page, pageSize))
 }
+
+// ── Detail handlers ──
+
+func (h *Handler) GetPodDetail(c *gin.Context) {
+	cluster := c.Param("cluster")
+	namespace := c.Param("namespace")
+	name := c.Param("pod")
+
+	ctx, cancel := context.WithTimeout(c.Request.Context(), 30*time.Second)
+	defer cancel()
+
+	detail, err := h.manager.GetPodDetail(ctx, cluster, namespace, name)
+	if err != nil {
+		c.JSON(http.StatusNotFound, gin.H{"error": err.Error()})
+		return
+	}
+	c.JSON(http.StatusOK, detail)
+}
+
+func (h *Handler) GetServiceDetail(c *gin.Context) {
+	cluster := c.Param("cluster")
+	namespace := c.Param("namespace")
+	name := c.Param("service")
+
+	ctx, cancel := context.WithTimeout(c.Request.Context(), 30*time.Second)
+	defer cancel()
+
+	detail, err := h.manager.GetServiceDetail(ctx, cluster, namespace, name)
+	if err != nil {
+		c.JSON(http.StatusNotFound, gin.H{"error": err.Error()})
+		return
+	}
+	c.JSON(http.StatusOK, detail)
+}
+
+func (h *Handler) GetDeploymentDetail(c *gin.Context) {
+	cluster := c.Param("cluster")
+	namespace := c.Param("namespace")
+	name := c.Param("deployment")
+
+	ctx, cancel := context.WithTimeout(c.Request.Context(), 30*time.Second)
+	defer cancel()
+
+	detail, err := h.manager.GetDeploymentDetail(ctx, cluster, namespace, name)
+	if err != nil {
+		c.JSON(http.StatusNotFound, gin.H{"error": err.Error()})
+		return
+	}
+	c.JSON(http.StatusOK, detail)
+}
+
+func (h *Handler) GetIngressDetail(c *gin.Context) {
+	cluster := c.Param("cluster")
+	namespace := c.Param("namespace")
+	name := c.Param("ingress")
+
+	ctx, cancel := context.WithTimeout(c.Request.Context(), 30*time.Second)
+	defer cancel()
+
+	detail, err := h.manager.GetIngressDetail(ctx, cluster, namespace, name)
+	if err != nil {
+		c.JSON(http.StatusNotFound, gin.H{"error": err.Error()})
+		return
+	}
+	c.JSON(http.StatusOK, detail)
+}
+
+func (h *Handler) GetNodeDetail(c *gin.Context) {
+	cluster := c.Param("cluster")
+	name := c.Param("node")
+
+	ctx, cancel := context.WithTimeout(c.Request.Context(), 30*time.Second)
+	defer cancel()
+
+	detail, err := h.manager.GetNodeDetail(ctx, cluster, name)
+	if err != nil {
+		c.JSON(http.StatusNotFound, gin.H{"error": err.Error()})
+		return
+	}
+	c.JSON(http.StatusOK, detail)
+}

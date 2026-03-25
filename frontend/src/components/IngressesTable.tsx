@@ -3,9 +3,14 @@ import type { IngressInfo } from '../types';
 interface IngressesTableProps {
   ingresses: IngressInfo[];
   loading: boolean;
+  onNameClick?: (cluster: string, namespace: string, name: string) => void;
 }
 
-export function IngressesTable({ ingresses, loading }: IngressesTableProps) {
+export function IngressesTable({
+  ingresses,
+  loading,
+  onNameClick,
+}: IngressesTableProps) {
   if (loading) {
     return (
       <div className='flex justify-center py-12'>
@@ -66,10 +71,23 @@ export function IngressesTable({ ingresses, loading }: IngressesTableProps) {
                 {ing.namespace}
               </td>
               <td
-                className='truncate px-3 py-2 text-xs font-mono text-[var(--color-text-primary)]'
+                className='truncate px-3 py-2 text-xs font-mono'
                 title={ing.name}
               >
-                {ing.name}
+                {onNameClick ? (
+                  <button
+                    onClick={() =>
+                      onNameClick(ing.cluster, ing.namespace, ing.name)
+                    }
+                    className='text-[var(--color-accent)] hover:underline text-left cursor-pointer'
+                  >
+                    {ing.name}
+                  </button>
+                ) : (
+                  <span className='text-[var(--color-text-primary)]'>
+                    {ing.name}
+                  </span>
+                )}
               </td>
               <td
                 className='truncate px-3 py-2 text-xs text-[var(--color-text-secondary)]'

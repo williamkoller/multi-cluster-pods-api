@@ -25,6 +25,7 @@ import { OverviewCards } from './components/OverviewCards';
 import { Pagination } from './components/Pagination';
 import { PodLogsViewer } from './components/PodLogsViewer';
 import { PodsTable } from './components/PodsTable';
+import { ResourceDetail } from './components/ResourceDetail';
 import { SearchBar } from './components/SearchBar';
 import { ServicesTable } from './components/ServicesTable';
 import { ToastContainer } from './components/ToastContainer';
@@ -38,6 +39,7 @@ import type {
   NodeInfo,
   PaginatedResponse,
   PodInfo,
+  ResourceRef,
   ServiceInfo,
 } from './types';
 
@@ -139,6 +141,7 @@ function App() {
     namespace: string;
     pod: string;
   } | null>(null);
+  const [detailTarget, setDetailTarget] = useState<ResourceRef | null>(null);
   const { toasts, addToast, removeToast } = useToast();
   const intervalRef = useRef<ReturnType<typeof setInterval> | null>(null);
 
@@ -709,6 +712,9 @@ function App() {
               loading={loading}
               onRestart={handleRestart}
               onViewLogs={handleViewLogs}
+              onNameClick={(cluster, namespace, name) =>
+                setDetailTarget({ kind: 'pod', cluster, namespace, name })
+              }
             />
           </Tabs.Content>
           <Tabs.Content
@@ -716,7 +722,13 @@ function App() {
             forceMount
             className={tab !== 'services' ? 'hidden' : ''}
           >
-            <ServicesTable services={filteredServices} loading={loading} />
+            <ServicesTable
+              services={filteredServices}
+              loading={loading}
+              onNameClick={(cluster, namespace, name) =>
+                setDetailTarget({ kind: 'service', cluster, namespace, name })
+              }
+            />
           </Tabs.Content>
           <Tabs.Content
             value='deployments'
@@ -728,6 +740,14 @@ function App() {
               loading={loading}
               onScale={handleScale}
               onRolloutRestart={handleRolloutRestart}
+              onNameClick={(cluster, namespace, name) =>
+                setDetailTarget({
+                  kind: 'deployment',
+                  cluster,
+                  namespace,
+                  name,
+                })
+              }
             />
           </Tabs.Content>
           <Tabs.Content
@@ -735,7 +755,13 @@ function App() {
             forceMount
             className={tab !== 'nodes' ? 'hidden' : ''}
           >
-            <NodesTable nodes={filteredNodes} loading={loading} />
+            <NodesTable
+              nodes={filteredNodes}
+              loading={loading}
+              onNameClick={(cluster, name) =>
+                setDetailTarget({ kind: 'node', cluster, namespace: '', name })
+              }
+            />
           </Tabs.Content>
           <Tabs.Content
             value='events'
@@ -749,7 +775,13 @@ function App() {
             forceMount
             className={tab !== 'ingresses' ? 'hidden' : ''}
           >
-            <IngressesTable ingresses={filteredIngresses} loading={loading} />
+            <IngressesTable
+              ingresses={filteredIngresses}
+              loading={loading}
+              onNameClick={(cluster, namespace, name) =>
+                setDetailTarget({ kind: 'ingress', cluster, namespace, name })
+              }
+            />
           </Tabs.Content>
           {tab !== 'overview' && tab !== 'applications' && (
             <Pagination
@@ -773,6 +805,14 @@ function App() {
           namespace={logsTarget.namespace}
           pod={logsTarget.pod}
           onClose={() => setLogsTarget(null)}
+        />
+      )}
+
+      {detailTarget && (
+        <ResourceDetail
+          resource={detailTarget}
+          onClose={() => setDetailTarget(null)}
+          onNavigate={setDetailTarget}
         />
       )}
 

@@ -76,6 +76,13 @@ func main() {
 	apiGroup.GET("/applications", handler.ListApplications)
 	apiGroup.GET("/applications/:cluster", handler.ListApplicationsByCluster)
 
+	// Detail endpoints
+	apiGroup.GET("/pods/:cluster/:namespace/:pod/detail", handler.GetPodDetail)
+	apiGroup.GET("/services/:cluster/:namespace/:service/detail", handler.GetServiceDetail)
+	apiGroup.GET("/deployments/:cluster/:namespace/:deployment/detail", handler.GetDeploymentDetail)
+	apiGroup.GET("/ingresses/:cluster/:namespace/:ingress/detail", handler.GetIngressDetail)
+	apiGroup.GET("/nodes/:cluster/:node/detail", handler.GetNodeDetail)
+
 	addr := ":8080"
 	log.Printf("server running on %s", addr)
 	if err := router.Run(addr); err != nil {

@@ -1,11 +1,16 @@
 import type {
   ApplicationInfo,
+  DeploymentDetail,
   DeploymentInfo,
   EventInfo,
+  IngressDetail,
   IngressInfo,
+  NodeDetail,
   NodeInfo,
   PaginatedResponse,
+  PodDetail,
   PodInfo,
+  ServiceDetail,
   ServiceInfo,
   SummaryResponse,
 } from '../types';
@@ -236,5 +241,56 @@ export async function getApplications(
   }
   return fetchJSON<PaginatedResponse<ApplicationInfo>>(
     `${BASE_URL}/applications${query}`,
+  );
+}
+
+// Detail endpoints
+
+export async function getPodDetail(
+  cluster: string,
+  namespace: string,
+  name: string,
+): Promise<PodDetail> {
+  return fetchJSON<PodDetail>(
+    `${BASE_URL}/pods/${encodeURIComponent(cluster)}/${encodeURIComponent(namespace)}/${encodeURIComponent(name)}/detail`,
+  );
+}
+
+export async function getServiceDetail(
+  cluster: string,
+  namespace: string,
+  name: string,
+): Promise<ServiceDetail> {
+  return fetchJSON<ServiceDetail>(
+    `${BASE_URL}/services/${encodeURIComponent(cluster)}/${encodeURIComponent(namespace)}/${encodeURIComponent(name)}/detail`,
+  );
+}
+
+export async function getDeploymentDetail(
+  cluster: string,
+  namespace: string,
+  name: string,
+): Promise<DeploymentDetail> {
+  return fetchJSON<DeploymentDetail>(
+    `${BASE_URL}/deployments/${encodeURIComponent(cluster)}/${encodeURIComponent(namespace)}/${encodeURIComponent(name)}/detail`,
+  );
+}
+
+export async function getIngressDetail(
+  cluster: string,
+  namespace: string,
+  name: string,
+): Promise<IngressDetail> {
+  return fetchJSON<IngressDetail>(
+    `${BASE_URL}/ingresses/${encodeURIComponent(cluster)}/${encodeURIComponent(namespace)}/${encodeURIComponent(name)}/detail`,
+  );
+}
+
+export async function getNodeDetail(
+  cluster: string,
+  name: string,
+): Promise<NodeDetail> {
+  return fetchJSON<NodeDetail>(
+    `${BASE_URL}/nodes/${encodeURIComponent(cluster)}/${encodeURIComponent(name)}/detail`,
   );
 }

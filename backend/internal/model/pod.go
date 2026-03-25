@@ -155,6 +155,124 @@ type PaginatedResponse[T any] struct {
 	TotalPages int `json:"totalPages"`
 }
 
+// Detail types for individual resource views
+
+type ContainerDetail struct {
+	Name         string            `json:"name"`
+	Image        string            `json:"image"`
+	Ready        bool              `json:"ready"`
+	RestartCount int32             `json:"restartCount"`
+	State        string            `json:"state"`
+	Ports        []ContainerPort   `json:"ports"`
+	Resources    ContainerResource `json:"resources"`
+}
+
+type ContainerPort struct {
+	Name          string `json:"name"`
+	ContainerPort int32  `json:"containerPort"`
+	Protocol      string `json:"protocol"`
+}
+
+type ContainerResource struct {
+	CPURequest    string `json:"cpuRequest"`
+	CPULimit      string `json:"cpuLimit"`
+	MemoryRequest string `json:"memoryRequest"`
+	MemoryLimit   string `json:"memoryLimit"`
+}
+
+type PodDetail struct {
+	Cluster     string            `json:"cluster"`
+	Namespace   string            `json:"namespace"`
+	Name        string            `json:"name"`
+	Ready       string            `json:"ready"`
+	Status      string            `json:"status"`
+	Age         string            `json:"age"`
+	NodeName    string            `json:"nodeName"`
+	PodIP       string            `json:"podIP"`
+	Labels      map[string]string `json:"labels"`
+	Annotations map[string]string `json:"annotations"`
+	Containers  []ContainerDetail `json:"containers"`
+	Events      []EventInfo       `json:"events"`
+}
+
+type ServiceDetail struct {
+	Cluster         string            `json:"cluster"`
+	Namespace       string            `json:"namespace"`
+	Name            string            `json:"name"`
+	Type            string            `json:"type"`
+	ClusterIP       string            `json:"clusterIp"`
+	Ports           string            `json:"ports"`
+	Age             string            `json:"age"`
+	Labels          map[string]string `json:"labels"`
+	Annotations     map[string]string `json:"annotations"`
+	Selector        map[string]string `json:"selector"`
+	Pods            []PodInfo         `json:"pods"`
+	SessionAffinity string            `json:"sessionAffinity"`
+}
+
+type DeploymentDetail struct {
+	Cluster     string            `json:"cluster"`
+	Namespace   string            `json:"namespace"`
+	Name        string            `json:"name"`
+	Replicas    int32             `json:"replicas"`
+	Available   int32             `json:"available"`
+	Ready       int32             `json:"ready"`
+	Updated     int32             `json:"updated"`
+	Age         string            `json:"age"`
+	Labels      map[string]string `json:"labels"`
+	Annotations map[string]string `json:"annotations"`
+	Selector    map[string]string `json:"selector"`
+	Strategy    string            `json:"strategy"`
+	Pods        []PodInfo         `json:"pods"`
+	Events      []EventInfo       `json:"events"`
+}
+
+type IngressRule struct {
+	Host  string        `json:"host"`
+	Paths []IngressPath `json:"paths"`
+}
+
+type IngressPath struct {
+	Path        string `json:"path"`
+	PathType    string `json:"pathType"`
+	ServiceName string `json:"serviceName"`
+	ServicePort string `json:"servicePort"`
+}
+
+type IngressDetail struct {
+	Cluster      string            `json:"cluster"`
+	Namespace    string            `json:"namespace"`
+	Name         string            `json:"name"`
+	IngressClass string            `json:"ingressClass"`
+	Hosts        []string          `json:"hosts"`
+	Age          string            `json:"age"`
+	Labels       map[string]string `json:"labels"`
+	Annotations  map[string]string `json:"annotations"`
+	Rules        []IngressRule     `json:"rules"`
+}
+
+type NodeDetail struct {
+	Cluster           string            `json:"cluster"`
+	Name              string            `json:"name"`
+	Status            string            `json:"status"`
+	Roles             string            `json:"roles"`
+	Version           string            `json:"version"`
+	OS                string            `json:"os"`
+	Arch              string            `json:"arch"`
+	CPUCapacity       string            `json:"cpuCapacity"`
+	MemoryCapacity    string            `json:"memoryCapacity"`
+	CPUAllocatable    string            `json:"cpuAllocatable"`
+	MemoryAllocatable string            `json:"memoryAllocatable"`
+	Age               string            `json:"age"`
+	Labels            map[string]string `json:"labels"`
+	Annotations       map[string]string `json:"annotations"`
+	KernelVersion     string            `json:"kernelVersion"`
+	ContainerRuntime  string            `json:"containerRuntime"`
+	InternalIP        string            `json:"internalIP"`
+	PodCIDR           string            `json:"podCIDR"`
+	Pods              []PodInfo         `json:"pods"`
+}
+
 func Paginate[T any](items []T, page, pageSize int) PaginatedResponse[T] {
 	total := len(items)
 	if page < 1 {

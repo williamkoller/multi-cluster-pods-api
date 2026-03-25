@@ -16,6 +16,7 @@ interface DeploymentsTableProps {
     namespace: string,
     deployment: string,
   ) => Promise<void>;
+  onNameClick?: (cluster: string, namespace: string, name: string) => void;
 }
 
 export function DeploymentsTable({
@@ -23,6 +24,7 @@ export function DeploymentsTable({
   loading,
   onScale,
   onRolloutRestart,
+  onNameClick,
 }: DeploymentsTableProps) {
   const [scalingKey, setScalingKey] = useState<string | null>(null);
   const [restartingKey, setRestartingKey] = useState<string | null>(null);
@@ -131,10 +133,27 @@ export function DeploymentsTable({
                     {deploy.namespace}
                   </td>
                   <td
-                    className='truncate px-3 py-2 text-xs font-mono text-[var(--color-text-primary)]'
+                    className='truncate px-3 py-2 text-xs font-mono'
                     title={deploy.name}
                   >
-                    {deploy.name}
+                    {onNameClick ? (
+                      <button
+                        onClick={() =>
+                          onNameClick(
+                            deploy.cluster,
+                            deploy.namespace,
+                            deploy.name,
+                          )
+                        }
+                        className='text-[var(--color-accent)] hover:underline text-left cursor-pointer'
+                      >
+                        {deploy.name}
+                      </button>
+                    ) : (
+                      <span className='text-[var(--color-text-primary)]'>
+                        {deploy.name}
+                      </span>
+                    )}
                   </td>
                   <td className='px-3 py-2 text-xs text-[var(--color-text-secondary)]'>
                     {deploy.replicas}
