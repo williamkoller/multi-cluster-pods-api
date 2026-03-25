@@ -22,10 +22,11 @@ services:
       - KUBECONFIG=/app/.kube/config
       - REDIS_ADDR=redis:6379
       - GIN_MODE=${GIN_MODE:-release}
-    extra_hosts:
-      - "host.docker.internal:host-gateway"
     volumes:
       - ${KUBECONFIG:-${HOME}/.kube/config}:/tmp/.kube/config:ro
+    networks:
+      - default
+      - kind
     depends_on:
       redis:
         condition: service_healthy
@@ -39,6 +40,10 @@ services:
     depends_on:
       - backend
     restart: unless-stopped
+
+networks:
+  kind:
+    external: true
 
 volumes:
   redis-data:
